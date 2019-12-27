@@ -72,12 +72,12 @@ class Card:
 
     def __repr__(self):
         """
-        Define how cards are printed.
+        Define how cards are represented as strings.
         """
         if self.card_val == 18:
             return "JOK"
         else:
-            return "{:>2}{}".format(self.val_name, self.card_suit)
+            return "{}{}".format(self.val_name, self.card_suit)
 
     def __lt__(self, other):
         """
@@ -110,7 +110,7 @@ class Hand:
         """
         Define how hands are printed.
         """
-        return " ".join(["| {} |".format(card) for card in self.card_list])
+        return " ".join(["| {:>3} |".format(str(card)) for card in self.card_list])
 
     def printFullHand(self):
         """
