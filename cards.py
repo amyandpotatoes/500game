@@ -83,8 +83,8 @@ class Card:
         """
         Define how cards are ordered, mostly for display. (Not game play).
         """
-        return self.bower_suit < other.bower_suit or \
-               (self.bower_suit == other.bower_suit and self.trump_val < other.trump_val)
+        return self.bower_suit.rank < other.bower_suit.rank or \
+               (self.bower_suit.rank == other.bower_suit.rank and self.trump_val < other.trump_val)
 
 
 class Hand:
@@ -97,6 +97,26 @@ class Hand:
             card.location = player_name
             self.card_list.append(card)
         self.card_list.sort()
+
+    def addCard(self, card):
+        self.card_list.append(card)
+        self.card_list.sort()
+
+    def removeCard(self, card):
+        self.card_list.remove(card)
+
+    def __repr__(self):
+        """
+        Define how hands are printed.
+        """
+        return " ".join(["| {} |".format(card) for card in self.card_list])
+
+    def printFullHand(self):
+        print(" ".join(["-------".format(card) for card in self.card_list]))
+        print(" ".join(["|     |".format(card) for card in self.card_list]))
+        print(self)
+        print(" ".join(["|     |".format(card) for card in self.card_list]))
+        print(" ".join(["-------".format(card) for card in self.card_list]))
 
 
 notrumps = Suit("NT", 5)
@@ -116,7 +136,13 @@ print(spades2)
 print(spades12)
 print(jok)
 
+hand1 = Hand([spades2, spades12], "Amy")
 
+print(hand1)
+hand1.addCard(jok)
+print(hand1)
+
+hand1.printFullHand()
 
 
 
