@@ -92,6 +92,7 @@ class Hand:
     Object representing a player's hand of cards.
     """
     def __init__(self, card_list, player_name):
+        self.player_name = player_name
         self.card_list = []
         for card in card_list:
             card.location = player_name
@@ -112,6 +113,10 @@ class Hand:
         return " ".join(["| {} |".format(card) for card in self.card_list])
 
     def printFullHand(self):
+        """
+        Prints hand neatly with large cards.
+        """
+        print("{}:".format(self.player_name))
         print(" ".join(["-------".format(card) for card in self.card_list]))
         print(" ".join(["|     |".format(card) for card in self.card_list]))
         print(self)
