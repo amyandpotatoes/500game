@@ -15,6 +15,9 @@ class Suit:
     def __repr__(self):
         return self.name
 
+    def __lt__(self, other):
+        return self.rank < other.rank
+
 
 class Card:
     """
@@ -42,7 +45,7 @@ class Card:
         self.bower_suit = suit
         self.card_val = card_val
         self.trump_val = card_val
-        self.isTrumps = False
+        self.is_trumps = False
 
         # determine printable name of value
         if self.card_val <= 13:
@@ -57,6 +60,12 @@ class Card:
             self.val_name = "A"
         elif self.card_val == 18:
             self.val_name = "JOK"
+
+        # determine printable name of card
+        if self.card_val == 18:
+            self.card_name = "JOK"
+        else:
+            self.card_name = "{}{}".format(self.val_name, self.card_suit)
 
     def changeValToTrumps(self):
         """
@@ -74,17 +83,14 @@ class Card:
         """
         Define how cards are represented as strings.
         """
-        if self.card_val == 18:
-            return "JOK"
-        else:
-            return "{}{}".format(self.val_name, self.card_suit)
+        return self.card_name
 
     def __lt__(self, other):
         """
         Define how cards are ordered, mostly for display. (Not game play).
         """
-        return self.bower_suit.rank < other.bower_suit.rank or \
-               (self.bower_suit.rank == other.bower_suit.rank and self.trump_val < other.trump_val)
+        return self.bower_suit < other.bower_suit or \
+               (self.bower_suit == other.bower_suit and self.trump_val < other.trump_val)
 
 
 class Hand:
