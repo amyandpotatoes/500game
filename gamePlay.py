@@ -3,6 +3,7 @@ from cards import Suit, Card, Hand
 from itertools import chain
 from random import shuffle
 
+
 class Game:
     def __init__(self, type="500", player_count=4, teams={}):
         # type can be "single" or "500"
@@ -19,6 +20,9 @@ class Game:
             teams[0] = [0,2]
             teams[1] = [1,3]
         self.players = range(player_count)
+        self.players = []
+        # deck is a list of cards, decided by the number of players
+        self.deck = []
 
     def initGame(self):
         raise NotImplementedError
@@ -26,32 +30,8 @@ class Game:
     def initPlayers(self):
         raise NotImplementedError
 
-    def runRound(self):
-        raise NotImplementedError
-
-    def displayResults(self):
-        raise NotImplementedError
-
-
-class Player:
-    def __init__(self, name):
-        self.name = name
-
-    def addTrickToPlayer(self, trick):
-        raise NotImplementedError
-
-
-class Round:
-    def __init__(self, players, player_count, teams):
-        self.players = players
-        self.player_count = player_count
-        self.teams = teams
-        self.hands = []
-        self.kitty = None
-
-    def dealCards(self):
-        # first create and fill deck
-        deck = []
+    def initDeck(self):
+        # first fill deck
 
         # 16 picture cards + joker, number cards have card values 2-13, picture
         # cards have card values 14-17, joker has card value 18
@@ -81,36 +61,57 @@ class Round:
 
         # create notrumps suit and cards (joker and no-trumps bids)
         notrumps = Suit("NT", 5)
-        deck.append(Card(notrumps, 18))
+        self.deck.append(Card(notrumps, 18))
 
         # create suits and cards and add to deck
         hearts = Suit("H", 4)
-        deck.extend([Card(hearts, val) for val in red_cards])
+        self.deck.extend([Card(hearts, val) for val in red_cards])
         diamonds = Suit("D", 3)
-        deck.extend([Card(diamonds, val) for val in red_cards])
+        self.deck.extend([Card(diamonds, val) for val in red_cards])
         clubs = Suit("C", 2)
-        deck.extend([Card(clubs, val) for val in black_cards])
+        self.deck.extend([Card(clubs, val) for val in black_cards])
         spades = Suit("S", 1)
-        deck.extend([Card(spades, val) for val in black_cards])
+        self.deck.extend([Card(spades, val) for val in black_cards])
 
+    def runRound(self):
+        raise NotImplementedError
+
+    def displayResults(self):
+        raise NotImplementedError
+
+
+class Player:
+    def __init__(self, name):
+        self.name = name
+
+    def addTrickToPlayer(self, trick):
+        raise NotImplementedError
+
+
+class Round:
+    def __init__(self, players, player_count, teams, deck):
+        self.players = players
+        self.player_count = player_count
+        self.teams = teams
+        self.hands = []
+        self.kitty = None
+        self.deck = deck.deepcopy()
+
+    def dealCards(self):
         # shuffle deck
-        shuffle(deck)
+        shuffle(self.deck)
 
         # next, create hands
         for player in self.players:
-            dealt_cards = deck[-10:]
-            del deck[-10:]
+            dealt_cards = self.deck[-10:]
+            del self.deck[-10:]
             self.hands.append(Hand(dealt_cards, player))
-        self.kitty = Hand(deck, Player("kitty"))
+        self.kitty = Hand(self.deck, Player("kitty"))
 
         for hand in self.hands:
             hand.printFullHand()
 
         self.kitty.printFullHand()
-
-        print()
-
-
 
     def runBidding(self):
         raise NotImplementedError
