@@ -45,6 +45,8 @@ class Card:
         self.isTrumps = False
 
         # determine printable name of value
+        if self.card_val < 2 or self.card_val > 19:
+            raise Exception("invalid card value")
         if self.card_val <= 13:
             self.val_name = str(self.card_val)
         elif self.card_val == 14:
