@@ -1,8 +1,20 @@
-from .cards import Suit, Card, Hand
+from cards import Suit, Card, Hand
 
+from itertools import chain
+from random import shuffle
 
 class Game:
     def __init__(self):
+        # type can be "single" or "first to 500"
+        self.type = ""
+        # player_count can be 3, 4, 5 or 6
+        self.player_count = 0
+        # teams is a dictionary of teams and their members
+        self.teams = dict()
+        # players is a list of players in the order they play
+        self.players = []
+
+    def initGame(self):
         raise NotImplementedError
 
     def initPlayers(self):
@@ -16,25 +28,83 @@ class Game:
 
 
 class Player:
-    def __init__(self):
-        raise NotImplementedError
+    def __init__(self, name):
+        self.name = name
 
     def addTrickToPlayer(self, trick):
         raise NotImplementedError
 
 
 class Round:
-    def __init__(self):
-        raise NotImplementedError
+    def __init__(self, players, player_count, teams):
+        self.players = players
+        self.player_count = player_count
+        self.teams = teams
+        self.hands = []
+        self.kitty = None
 
     def dealCards(self):
-        notrumps = Suit("NT", 5)
-        hearts = Suit("H", 4)
-        diamonds = Suit("D", 3)
-        clubs = Suit("C", 2)
-        spades = Suit("S", 1)
+        # first create and fill deck
+        deck = []
 
-        raise NotImplementedError
+        # 16 picture cards + joker, number cards have card values 2-13, picture
+        # cards have card values 14-17, joker has card value 18
+
+        red_cards = None
+        black_cards = None
+
+        while not (red_cards and black_cards):
+            if self.player_count == 3:
+                # need 33 cards total, so 16 number cards, red 7-10, black 7-10
+                red_cards = list(chain(range(7, 11), range(14, 18)))
+                black_cards = list(chain(range(7, 11), range(14, 18)))
+            elif self.player_count == 4:
+                # need 43 cards in total, so 26 number cards, red 4-10, black 5-10
+                red_cards = list(chain(range(4, 11), range(14, 18)))
+                black_cards = list(chain(range(5, 11), range(14, 18)))
+            elif self.player_count == 5:
+                # need 53 cards in total, full regular deck (2-10)
+                red_cards = list(chain(range(2, 11), range(14, 18)))
+                black_cards = list(chain(range(2, 11), range(14, 18)))
+            elif self.player_count == 6:
+                # need 63 cards in total, so 46 number cards, red 2-13, black 3-13
+                red_cards = list(range(2, 18))
+                black_cards = list(range(3, 18))
+            else:
+                print("Please choose a number of players between 3 and 6.")
+
+        # create notrumps suit and cards (joker and no-trumps bids)
+        notrumps = Suit("NT", 5)
+        deck.append(Card(notrumps, 18))
+
+        # create suits and cards and add to deck
+        hearts = Suit("H", 4)
+        deck.extend([Card(hearts, val) for val in red_cards])
+        diamonds = Suit("D", 3)
+        deck.extend([Card(diamonds, val) for val in red_cards])
+        clubs = Suit("C", 2)
+        deck.extend([Card(clubs, val) for val in black_cards])
+        spades = Suit("S", 1)
+        deck.extend([Card(spades, val) for val in black_cards])
+
+        # shuffle deck
+        shuffle(deck)
+
+        # next, create hands
+        for player in self.players:
+            dealt_cards = deck[-10:]
+            del deck[-10:]
+            self.hands.append(Hand(dealt_cards, player))
+        self.kitty = Hand(deck, Player("kitty"))
+
+        for hand in self.hands:
+            hand.printFullHand()
+
+        self.kitty.printFullHand()
+
+        print()
+
+
 
     def runBidding(self):
         raise NotImplementedError
@@ -115,6 +185,14 @@ class Trick:
         raise NotImplementedError
 
 
+a = Player("A")
+b = Player("B")
+c = Player("C")
+d = Player("D")
+
+round1 = Round([a, b, c, d], 4, {"team1": [a, c], "team2": [b, d]})
+
+round1.dealCards()
 
 
 

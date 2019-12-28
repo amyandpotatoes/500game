@@ -1,3 +1,4 @@
+
 class Suit:
     """
     Object representing one of the 4 suits or no trumps.
@@ -13,7 +14,16 @@ class Suit:
         self.rank = rank
 
     def __repr__(self):
-        return self.name
+        if self.name == "H":
+            return "♥"
+        elif self.name == "C":
+            return "♣"
+        elif self.name == "S":
+            return "♠"
+        elif self.name == "D":
+            return "♦"
+        else:
+            return ""
 
     def __lt__(self, other):
         return self.rank < other.rank
@@ -46,6 +56,7 @@ class Card:
         self.card_val = card_val
         self.trump_val = card_val
         self.is_trumps = False
+        self.location = None
 
         # determine printable name of value
         if self.card_val < 2 or self.card_val > 19:
@@ -61,7 +72,7 @@ class Card:
         elif self.card_val == 17:
             self.val_name = "A"
         elif self.card_val == 18:
-            self.val_name = "JOK"
+            self.val_name = "JOKER"
 
         # determine printable name of card
         if self.card_val == 18:
@@ -69,17 +80,24 @@ class Card:
         else:
             self.card_name = "{}{}".format(self.val_name, self.card_suit)
 
-    def changeValToTrumps(self):
+    def changeToTrumps(self, trump_suit):
         """
         When trumps is decided, use this function to update trump_val for cards
-        in the trump suit to allow easy ordering of cards.
+        in the trump suit to allow easy ordering of cards, and bower_suit and
+        trump_val for the bower and joker.
         """
+        self.is_trumps = True
         if self.card_val == 14:
             self.trump_val = 18
+            self.bower_suit = trump_suit
         elif 15 <= self.card_val <= 17:
             self.trump_val = self.card_val - 1
         elif self.card_val == 18:
             self.trump_val = 19
+            self.bower_suit = trump_suit
+
+    def moveCard(self, location):
+        self.location = location
 
     def __repr__(self):
         """
@@ -99,11 +117,11 @@ class Hand:
     """
     Object representing a player's hand of cards.
     """
-    def __init__(self, card_list, player_name):
-        self.player_name = player_name
+    def __init__(self, card_list, player):
+        self.player_name = player.name
         self.card_list = []
         for card in card_list:
-            card.location = player_name
+            card.location = player
             self.card_list.append(card)
         self.card_list.sort()
 
@@ -126,9 +144,9 @@ class Hand:
         """
         print("{}:".format(self.player_name))
         print(" ".join(["-------".format(card) for card in self.card_list]))
-        print(" ".join(["|     |".format(card) for card in self.card_list]))
-        print(self)
-        print(" ".join(["|     |".format(card) for card in self.card_list]))
+        print(" ".join(["|{:<5}|".format(str(card.val_name)) for card in self.card_list]))
+        print(" ".join(["|{:^5}|".format(str(card.card_suit)) for card in self.card_list]))
+        print(" ".join(["|{:>5}|".format(str(card.val_name)) for card in self.card_list]))
         print(" ".join(["-------".format(card) for card in self.card_list]))
 
 
@@ -141,21 +159,13 @@ spades = Suit("S", 1)
 
 # TESTING
 
-spades2 = Card(spades, 2)
-spades12 = Card(spades, 12)
-jok = Card(notrumps, 18)
-
-print(spades2)
-print(spades12)
-print(jok)
-
-hand1 = Hand([spades2, spades12], "Amy")
-
-print(hand1)
-hand1.addCard(jok)
-print(hand1)
-
-hand1.printFullHand()
+# spades2 = Card(spades, 2)
+# spades12 = Card(spades, 12)
+# jok = Card(notrumps, 18)
+#
+# print(spades2)
+# print(spades12)
+# print(jok)
 
 
 
