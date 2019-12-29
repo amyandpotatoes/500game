@@ -56,7 +56,6 @@ class Card:
         self.card_val = card_val
         self.trump_val = card_val
         self.is_trumps = False
-        self.location = None
 
         # determine printable name of value
         if self.card_val < 2 or self.card_val > 19:
@@ -96,9 +95,6 @@ class Card:
             self.trump_val = 19
             self.bower_suit = trump_suit
 
-    def moveCard(self, location):
-        self.location = location
-
     def __repr__(self):
         """
         Define how cards are represented as strings.
@@ -119,10 +115,7 @@ class Hand:
     """
     def __init__(self, card_list, player):
         self.player_name = player.name
-        self.card_list = []
-        for card in card_list:
-            card.location = player
-            self.card_list.append(card)
+        self.card_list = card_list
         self.card_list.sort()
 
     def addCard(self, card):
