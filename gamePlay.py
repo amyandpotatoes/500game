@@ -117,11 +117,7 @@ class Game:
 
         # -- yes just init the deck each time it should be quick
 
-        # TODO: init the deck each time
-        #  move deck initialisation method from Game into Round to make this easier and then call it here
-
-        self.current_round = Round(self.players, self.player_count,
-                                   self.teams, self.deck)
+        self.current_round = Round(self.players, self.player_count, self.teams)
 
         self.current_round.initDeck()
 
@@ -241,11 +237,17 @@ class Round:
         shuffle(self.deck)
 
         # next, create hands
-        # TODO: also set player attribute of cards
         for player in self.players:
+            # get cards dealt to single player
             dealt_cards = self.deck[-10:]
+            # remove dealt cards from deck
             del self.deck[-10:]
+            # set player attribute of cards
+            for card in dealt_cards:
+                card.assignToPlayer(player)
+            # add dealt hand to list of hands
             self.hands.append(Hand(dealt_cards, player))
+        # deal cards to kitty
         self.kitty = Hand(self.deck, Player("kitty"))
 
         for hand in self.hands:
@@ -325,18 +327,24 @@ class Bid:
 
 
 class BiddingRound:
-    def __init__(self, player_count):
-        self.winning_bid = Bid(None, 6, None)
+    """
+    One round of bidding, lasts until only one player is remaining.
+    """
+    def __init__(self, player_count, players):
+        # any first bid above this default is valid
+        self.winning_bid = Bid(Suit("NT", 5), 5, None)
         self.complete = False
-        self.remaining_players = player_count
+        self.remaining_player_count = player_count
+        self.remaining_players = players
 
     def addBid(self, bid):
         if bid > self.winning_bid:
             self.winning_bid = bid
             return 1
         elif bid.is_pass:
-            self.remaining_players -= 1
-            if self.remaining_players == 1:  # did you want something like this?
+            self.remaining_players.remove(bid.player)
+            self.remaining_player_count -= 1
+            if self.remaining_players == 1:
                 self.complete = True
             return 1
         else:
