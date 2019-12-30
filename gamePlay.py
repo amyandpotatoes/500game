@@ -217,6 +217,13 @@ class Round:
         self.kitty = None
         self.deck = deck.copy()
 
+
+    def createRoundQueue(self):
+        pass
+
+    def startRound(self):
+        pass
+
     def dealCards(self):
         # shuffle deck
         shuffle(self.deck)
@@ -322,7 +329,7 @@ b = Player("B")
 c = Player("C")
 d = Player("D")
 
-round1 = Round([a, b, c, d], 4, {"team1": [a, c], "team2": [b, d]})
+round1 = Round([a, b, c, d], 4, [[a, c], [b, d]], deck=[])
 
 round1.dealCards()
 
