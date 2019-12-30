@@ -9,6 +9,9 @@ class Suit:
     The only card that should have the suit of no trumps is the joker before
     trumps is called.
     """
+
+    # QUESTION: why not have suits and cards as an enum or similar type (surely python has something like that)
+    
     def __init__(self, name, rank):
         self.name = name
         self.rank = rank
@@ -85,6 +88,12 @@ class Card:
         in the trump suit to allow easy ordering of cards, and bower_suit and
         trump_val for the bower and joker.
         """
+
+        # QUESTION: why does this take trump_suit parameter and not check the suit
+        # of the card before making it a trump?
+        # what cards will this method be called for? it might be easier to call this for all the cards - could make a static method maybe -
+        # and check which cards need to become trumps in here
+
         self.is_trumps = True
         if self.card_val == 14:
             self.trump_val = 18

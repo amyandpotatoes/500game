@@ -161,6 +161,8 @@ class Game:
         # assigned bower suits and trump values that would need to be changed.
         # Or could just init deck again every time before startRound is called.
 
+        # -- yes just init the deck each time it should be quick
+
         self.current_round = Round(self.players, self.player_count,
                                    self.teams, self.deck)
 
@@ -291,23 +293,28 @@ class Bid:
                self.is_pass
 
 
-class BiddingRound:
-    def __init__(self):
-        self.winning_bid = Bid(None, 0, None)
+class BiddingRound:     # does this need to be a class?
+    def __init__(self, player_count):
+        self.winning_bid = Bid(None, 6, None)
         self.complete = False
+        self.remaining_players = player_count
 
     def addBid(self, bid):
         if bid > self.winning_bid:
             self.winning_bid = bid
             return 1
         elif bid.is_pass:
+            self.remaining_players -= 1
+            if self.remaining_players == 1:  # did you want something like this?
+                self.complete = True
             return 1
         else:
             print("Bid too low, try again.")
             return 0
 
     def getWinningBid(self):
-        return self.winning_bid
+        if self.complete:
+            return self.winning_bid
 
 
 class Trick:
