@@ -2,6 +2,7 @@ from cards import Suit, Card, Hand
 
 from itertools import chain
 from random import shuffle
+from queue import Queue
 
 
 class Game:
@@ -132,7 +133,7 @@ class Game:
         # pop the first item of the queue, save and begin actioning
         self.current_round.startRound()
 
-        # !! The rest of the actions for the round need to be initiated by user
+        # !! The rest of the stages of the round need to be initiated by user
         # input, and using the current round's queue
 
     def displayResults(self):
@@ -177,6 +178,14 @@ class Round:
         self.kitty = None
         # the deck of cards, a list containing objects of type Card
         self.deck = []
+        # queue of objects to be actioned in this round
+        self.stage_queue = Queue()
+        # stage in progress, type is either BiddingRound, Trick or something with scoring
+        self.stage_in_progress = None
+        # winning bid of bidding round, type is bid
+        self.winning_bid = None
+        # completed tricks, a list of tricks that have been completed
+        self.completed_tricks = []
 
     def initDeck(self):
         """
@@ -260,12 +269,21 @@ class Round:
         Create a queue of objects that need to be actioned in one round.
         1 x bidding round, 10 x tricks, 1 x score determination
         """
-        # TODO: complete createRoundQueue
-        raise NotImplementedError
+        # initialise queue of round's stages
+        self.stage_queue = Queue()
+
+        # add bidding round stage
+        self.stage_queue.put(BiddingRound(self.player_count, self.players))
+        # add trick stages
+        for _ in range(0, 10):
+            self.stage_queue.put(Trick())
+
+        # TODO: add something about scoring here idk
+
 
     def startRound(self):
         """
-        Get first element of round queue and action up until the point where
+        Get first element (stage) of round queue and action up until the point where
         user input is needed.
         """
         # TODO: implement startRound
