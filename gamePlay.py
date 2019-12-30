@@ -99,6 +99,89 @@ class Game:
         # this another time
         # TODO: catch invalid teams
 
+    def startRound(self):
+        """
+        This should start a round of 500 (ie. bidding, 10 tricks and
+        winner determination). It should be called by the game controller once
+        and then if it is in 500 mode it should be called again when a round
+        finishes without 500 being reached by any teams.
+
+        It should initialise an instance of Round and save it as
+        self.current_round so that it can be accessed by the game controller
+        to handle clicks when needed.
+        """
+
+        # May need to sanitise deck here as individual cards would have been
+        # assigned bower suits and trump values that would need to be changed.
+        # Or could just init deck again every time before startRound is called.
+
+        # -- yes just init the deck each time it should be quick
+
+        # TODO: init the deck each time
+        #  move deck initialisation method from Game into Round to make this easier and then call it here
+
+        self.current_round = Round(self.players, self.player_count,
+                                   self.teams, self.deck)
+
+        self.current_round.initDeck()
+
+        self.current_round.dealCards()
+
+        # create a queue of objects (1 x Bidding round, 1 x Kitty, 10 x Tricks,
+        # 1 x Score) that that will be popped, saved, actioned and deleted as
+        # the round progresses. The type of object will determine the action
+        # that needs to be taken in response to a click.
+        self.current_round.createRoundQueue()
+
+        # pop the first item of the queue, save and begin actioning
+        self.current_round.startRound()
+
+        # !! The rest of the actions for the round need to be initiated by user
+        # input, and using the current round's queue
+
+    def displayResults(self):
+        """
+        Not sure if this will be needed or how we will determine when to
+        display the overall score.
+        """
+        # TODO: work out how to display end of game results
+        raise NotImplementedError
+
+
+class Player:
+    """
+    An object representing a player which simply stores information about
+    their name as a string and whether they are human as a boolean.
+
+    More information such as the tricks they have won in the current round may
+    need to be added, not sure.
+    """
+    def __init__(self, name, is_human=False):
+        self.name = name
+        self.is_human = is_human
+
+
+class Round:
+    """
+    A round includes a round of bidding, 10 tricks, and the determination of
+    the winner and point allocation.
+    """
+    def __init__(self, players, player_count, teams):
+        # an ordered list of players, each of type Player.
+        self.players = players
+        # an int representing the number of players
+        self.player_count = player_count
+        # a list of lists where each inner list contains strings, representing
+        # the names of players in that team
+        self.teams = teams
+        # a list of objects of type Hand, corresponding to the players in
+        # self.players and in the same order
+        self.hands = []
+        # an object of type Hand that contains the cards in the kitty
+        self.kitty = None
+        # the deck of cards, a list containing objects of type Card
+        self.deck = []
+
     def initDeck(self):
         """
         Initialises self.deck with the appropriate deck of cards for the
@@ -147,94 +230,6 @@ class Game:
         self.deck.extend([Card(clubs, val) for val in black_cards])
         spades = Suit("S", 1)
         self.deck.extend([Card(spades, val) for val in black_cards])
-
-    def startRound(self):
-        """
-        This should start a round of 500 (ie. bidding, 10 tricks and
-        winner determination). It should be called by the game controller once
-        and then if it is in 500 mode it should be called again when a round
-        finishes without 500 being reached by any teams.
-
-        It should initialise an instance of Round and save it as
-        self.current_round so that it can be accessed by the game controller
-        to handle clicks when needed.
-        """
-
-        # May need to sanitise deck here as individual cards would have been
-        # assigned bower suits and trump values that would need to be changed.
-        # Or could just init deck again every time before startRound is called.
-
-        # -- yes just init the deck each time it should be quick
-
-        # TODO: init the deck each time
-        #  move deck initialisation method from Game into Round to make this easier and then call it here
-
-        self.current_round = Round(self.players, self.player_count,
-                                   self.teams, self.deck)
-
-        self.current_round.dealCards()
-
-        # create a queue of objects (1 x Bidding round, 1 x Kitty, 10 x Tricks,
-        # 1 x Score) that that will be popped, saved, actioned and deleted as
-        # the round progresses. The type of object will determine the action
-        # that needs to be taken in response to a click.
-        self.current_round.createRoundQueue()
-
-        # pop the first item of the queue, save and begin actioning
-        self.current_round.startRound()
-
-        # !! The rest of the actions for the round need to be initiated by user
-        # input, and using the current round's queue
-
-    def displayResults(self):
-        """
-        Not sure if this will be needed or how we will determine when to
-        display the overall score.
-        """
-        # TODO: work out how to display end of game results
-        raise NotImplementedError
-
-
-class Player:
-    """
-    An object representing a player which simply stores information about
-    their name as a string and whether they are human as a boolean.
-
-    More information such as the tricks they have won in the current round may
-    need to be added, not sure.
-    """
-    def __init__(self, name, is_human=False):
-        self.name = name
-        self.is_human = is_human
-
-
-class Round:
-    """
-    A round includes a round of bidding, 10 tricks, and the determination of
-    the winner and point allocation.
-    """
-    def __init__(self, players, player_count, teams, deck):
-        # an ordered list of players, each of type Player.
-        self.players = players
-        # an int representing the number of players
-        self.player_count = player_count
-        # a list of lists where each inner list contains strings, representing
-        # the names of players in that team
-        self.teams = teams
-        # a list of objects of type Hand, corresponding to the players in
-        # self.players and in the same order
-        self.hands = []
-        # an object of type Hand that contains the cards in the kitty
-        self.kitty = None
-        # the deck of cards, a list containing objects of type Card
-        self.deck = deck.copy()
-
-
-    def createRoundQueue(self):
-        pass
-
-    def startRound(self):
-        pass
 
     def dealCards(self):
         """
@@ -373,8 +368,9 @@ b = Player("B")
 c = Player("C")
 d = Player("D")
 
-round1 = Round([a, b, c, d], 4, [[a, c], [b, d]], deck=[])
+round1 = Round([a, b, c, d], 4, [["A", "B"], ["C", "D"]])
 
+round1.initDeck()
 round1.dealCards()
 
 
