@@ -207,12 +207,24 @@ class Player:
 
 
 class Round:
+    """
+    A round includes a round of bidding, 10 tricks, and the determination of
+    the winner and point allocation.
+    """
     def __init__(self, players, player_count, teams, deck):
+        # an ordered list of players, each of type Player.
         self.players = players
+        # an int representing the number of players
         self.player_count = player_count
+        # a list of lists where each inner list contains strings, representing
+        # the names of players in that team
         self.teams = teams
+        # a list of objects of type Hand, corresponding to the players in
+        # self.players and in the same order
         self.hands = []
+        # an object of type Hand that contains the cards in the kitty
         self.kitty = None
+        # the deck of cards, a list containing objects of type Card
         self.deck = deck.copy()
 
     def dealCards(self):
@@ -231,7 +243,13 @@ class Round:
 
         self.kitty.printFullHand()
 
-    def startBidding(self):
+    def createRoundQueue(self):
+        raise NotImplementedError
+
+    def startRound(self):
+        raise NotImplementedError
+
+    def continueRound(self):
         raise NotImplementedError
 
     def implementBiddingResults(self):
@@ -240,9 +258,6 @@ class Round:
         2. Assign roles to players.
         3. Give winner kitty and throw out cards.
         """
-        raise NotImplementedError
-
-    def runTrick(self):
         raise NotImplementedError
 
     def displayResults(self):
