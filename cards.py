@@ -163,7 +163,7 @@ class Hand:
         self.card_list.append(card)
         self.card_list.sort()
 
-    def removeCard(self, card)
+    def removeCard(self, card):
         """
         Used for playing cards and discarding to kitty. 
         :param card: a card of type Card
