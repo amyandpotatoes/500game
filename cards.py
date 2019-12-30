@@ -9,11 +9,11 @@ class Suit:
     The only card that should have the suit of no trumps is the joker before
     trumps is called.
     """
-
-    # QUESTION: why not have suits and cards as an enum or similar type (surely python has something like that)
     
     def __init__(self, name, rank):
+        # name is a string with a letter representing the suit
         self.name = name
+        # rank is used for ordering suits for bidding and displaying hands
         self.rank = rank
 
     def __repr__(self):
@@ -29,6 +29,9 @@ class Suit:
             return ""
 
     def __lt__(self, other):
+        """
+        Suits are ordered by their rank.
+        """
         return self.rank < other.rank
 
 
@@ -52,13 +55,24 @@ class Card:
     member of the trumps suit
 
     val_string is a string representing the value (number) of the card.
+
+    Each card is marked with the player it is dealt to, to make it easier to
+    work out who has won a trick.
     """
     def __init__(self, suit, card_val):
+        # suit shown on card
         self.card_suit = suit
+        # effective suit, only different from card_suit for bowers and joker
         self.bower_suit = suit
+        # value shown on card (14-18 for picture cards)
         self.card_val = card_val
+        # effective value, only different for picture cards in trump suit + bower + joker
         self.trump_val = card_val
+        # is the card part of the trump suit, makes it easier to check for trumping behaviour in tricks.
         self.is_trumps = False
+        # identifies which player was dealt the card
+        # not sure if this should be str or Player type, will make Player type for now
+        self.player = None
 
         # determine printable name of value
         if self.card_val < 2 or self.card_val > 19:
@@ -94,6 +108,12 @@ class Card:
         # what cards will this method be called for? it might be easier to call this for all the cards - could make a static method maybe -
         # and check which cards need to become trumps in here
 
+        # AMY: so how I imagine it working is that once trump is decided you call this on the bower and all the trump
+        # cards, but I think you're right that it might be easier to hold all the code for determining whether to do it
+        # here
+
+        # TODO: update so it checks whether trumps change is appropriate
+
         self.is_trumps = True
         if self.card_val == 14:
             self.trump_val = 18
@@ -103,6 +123,14 @@ class Card:
         elif self.card_val == 18:
             self.trump_val = 19
             self.bower_suit = trump_suit
+
+    def assignToPlayer(self, player):
+        """
+        Card should be assigned to player when it is dealt to them, mostly just
+        used for identifying the winner of a trick.
+        not sure if this should be str or Player type, will make Player type for now
+        """
+        self.player = player
 
     def __repr__(self):
         """
@@ -128,10 +156,18 @@ class Hand:
         self.card_list.sort()
 
     def addCard(self, card):
+        """
+        Adds a card to a hand, mostly for picking up cards from kitty.
+        :param card: a card of type Card
+        """
         self.card_list.append(card)
         self.card_list.sort()
 
-    def removeCard(self, card):
+    def removeCard(self, card)
+        """
+        Used for playing cards and discarding to kitty. 
+        :param card: a card of type Card
+        """
         self.card_list.remove(card)
 
     def __repr__(self):

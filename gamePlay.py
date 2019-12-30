@@ -60,7 +60,7 @@ class Game:
         if game_type == "500" or game_type == "single":
             self.game_type = game_type
         else:
-            raise Exception("invald type parameter for game")
+            raise Exception("Invald type parameter for game.")
 
     def initPlayers(self, player_count=4, players=None, teams=None):
         """
@@ -76,6 +76,7 @@ class Game:
         self.player_count = player_count
 
         self.players = players
+        # if player names not entered, use these defaults:
         if not self.players:
             self.players = [Player("1", True)] + [Player(str(num)) for num in range(2, player_count + 1)]
         if len(self.players) != player_count:
@@ -83,6 +84,7 @@ class Game:
                             "player count.")
 
         self.teams = teams
+        # if teams not entered, use these defaults:
         if not self.teams:
             if player_count == 3:
                 self.teams = [["1", "2", "3"]]
@@ -95,6 +97,7 @@ class Game:
 
         # need to catch invalid teams here, but it is a bit difficult, will do
         # this another time
+        # TODO: catch invalid teams
 
     def initDeck(self):
         """
@@ -163,6 +166,9 @@ class Game:
 
         # -- yes just init the deck each time it should be quick
 
+        # TODO: init the deck each time
+        #  move deck initialisation method from Game into Round to make this easier and then call it here
+
         self.current_round = Round(self.players, self.player_count,
                                    self.teams, self.deck)
 
@@ -185,6 +191,7 @@ class Game:
         Not sure if this will be needed or how we will determine when to
         display the overall score.
         """
+        # TODO: work out how to display end of game results
         raise NotImplementedError
 
 
@@ -199,13 +206,6 @@ class Player:
     def __init__(self, name, is_human=False):
         self.name = name
         self.is_human = is_human
-
-    def addTrickToPlayer(self, trick):
-        """
-        Not sure if this will be needed or whether information about the tricks
-        held by each player will just be stored within the round.
-        """
-        raise NotImplementedError
 
 
 class Round:
@@ -230,10 +230,16 @@ class Round:
         self.deck = deck.copy()
 
     def dealCards(self):
+        """
+        Deal cards to players and kitty, adding cards to self.hands and
+        self.kitty, also setting player attribute of cards.
+        :return:
+        """
         # shuffle deck
         shuffle(self.deck)
 
         # next, create hands
+        # TODO: also set player attribute of cards
         for player in self.players:
             dealt_cards = self.deck[-10:]
             del self.deck[-10:]
@@ -246,12 +252,27 @@ class Round:
         self.kitty.printFullHand()
 
     def createRoundQueue(self):
+        """
+        Create a queue of objects that need to be actioned in one round.
+        1 x bidding round, 10 x tricks, 1 x score determination
+        """
+        # TODO: complete createRoundQueue
         raise NotImplementedError
 
     def startRound(self):
+        """
+        Get first element of round queue and action up until the point where
+        user input is needed.
+        """
+        # TODO: implement startRound
         raise NotImplementedError
 
     def continueRound(self):
+        """
+        Get in progress round stage and continue to action using received user
+        input.
+        """
+        # TODO: implement continueRound
         raise NotImplementedError
 
     def implementBiddingResults(self):
@@ -260,13 +281,21 @@ class Round:
         2. Assign roles to players.
         3. Give winner kitty and throw out cards.
         """
+        # TODO: implement implementBiddingResults
         raise NotImplementedError
 
     def displayResults(self):
+        """
+        Display the results of a single round.
+        """
+        # TODO: implement displayResults
         raise NotImplementedError
 
 
 class Bid:
+    """
+    Bid is used to represent a single bid by a player.
+    """
     def __init__(self, suit, number, player):
         self.suit = suit
         self.number = number
@@ -293,7 +322,7 @@ class Bid:
                self.is_pass
 
 
-class BiddingRound:     # does this need to be a class?
+class BiddingRound:
     def __init__(self, player_count):
         self.winning_bid = Bid(None, 6, None)
         self.complete = False
@@ -328,7 +357,7 @@ class Trick:
     def addCardToTrick(self, card):
         raise NotImplementedError
 
-    def findTrickWinner(self):
+    def setTrickWinner(self):
         raise NotImplementedError
 
 
