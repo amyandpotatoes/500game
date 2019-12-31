@@ -283,19 +283,21 @@ class Round:
 
     def startRound(self):
         """
-        Get first element (stage) of round queue and action up until the point where
-        user input is needed.
+        Get first element (stage) of round queue and set this as current stage.
+
+        Stage will then be implemented in continueRound.
         """
-        # TODO: implement startRound
-        raise NotImplementedError
+
+        # first element should be a bidding round
+        self.stage_in_progress = self.stage_queue.get()
 
     def continueRound(self):
         """
         Get in progress round stage and continue to action using received user
         input.
         """
-        # TODO: implement continueRound
-        raise NotImplementedError
+        # TODO: fill this in - while loop for round then while loops for stages
+        # while
 
     def implementBiddingResults(self):
         """
@@ -351,9 +353,14 @@ class BiddingRound:
     def __init__(self, player_count, players):
         # any first bid above this default is valid
         self.winning_bid = Bid(Suit("NT", 5), 5, None)
+        # is the bidding round complete?
         self.complete = False
+        # number of players that have not passed
         self.remaining_player_count = player_count
+        # list of players that have not passed
         self.remaining_players = players
+        # index used to cycle through players in order
+        self.current_player_index = 0
 
     def addBid(self, bid):
         if bid > self.winning_bid:
