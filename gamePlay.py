@@ -297,7 +297,6 @@ class Round:
         input.
         """
         # TODO: fill this in - while loop for round then while loops for stages
-        # while
 
     def implementBiddingResults(self):
         """
