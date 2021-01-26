@@ -1,17 +1,16 @@
-class CustomEnvironment(Environment):
+class CardEnvironment(Environment):
 
-    def __init__(self, num_locations, num_cards):
+    def __init__(self):
         super().__init__()
-        self.num_locations = num_locations
-        self.num_cards = num_cards
+        self.card_game = SimpleGame() # TODO: can choose other cardgames - pass as param?
 
     def states(self):
         # num_locations is the number of places card can be - number of players + 1
         # true if the card is in that location
-        return dict(type='bool', shape=(self.num_locations, self.num_cards))
+        return dict(type='bool', shape=(self.card_game.num_locations, self.card_game.num_cards))
 
     def actions(self):
-        return dict(type='int', num_values=self.num_cards)
+        return dict(type='int', num_values=self.card_game.num_cards)
 
     # Optional: should only be defined if environment has a natural fixed
     # maximum episode length; otherwise specify maximum number of training
@@ -27,8 +26,10 @@ class CustomEnvironment(Environment):
         state = np.random.random(size=(8,))
         return state
 
-    def execute(self, actions):
+    def execute(self, action):
         next_state = np.random.random(size=(8,))
         terminal = np.random.random() < 0.5
         reward = np.random.random()
         return next_state, terminal, reward
+
+
