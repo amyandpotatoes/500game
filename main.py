@@ -1,7 +1,10 @@
 # just using template from FLight example
 # will make it work for cards
 # scaffold, not a working python file at this point
-from game-environments import CardEnvironment
+from gameEnvironments import CardEnvironment
+
+from tensorforce.agents import Agent
+import matplotlib.pyplot as plt
 
 def run(environment, agent, n_episodes, max_step_per_episode, test=False):
     """
@@ -47,22 +50,17 @@ def runner(
         result_vec.append(test_results)
 
     # Plot the evolution of the agent over the batches
-    plot_multiple(
-        Series=[result_vec],
-        labels = ["Reward"],
-        xlabel = "episodes",
-        ylabel = "Reward",
-        title = "Reward vs episodes",
-        save_fig=True,
-        path="env",
-        folder=str(combination),
-        time=False,
-    )
+    # - can plot more complicated things for debugging and hyperparameter tuning
+    plt.plot(result_vec)
+    plt.xlabel("Episode")
+    plt.ylabel("Score")
+    plt.show()
+   
     # Terminate the agent and the environment
     agent.close()
     environment.close()
 
-def main:
+def main():
     # Instantiane our environment
     environment = CardEnvironment()
     # Instantiate a Tensorforce agent

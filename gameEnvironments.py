@@ -1,6 +1,6 @@
-import game-models.py
+import gameModels
 
-from tensorforce.environment import Environment
+from tensorforce.environments import Environment
 
 import numpy as np # leave this to stop errors in scaffold for now
 
@@ -8,7 +8,7 @@ class CardEnvironment(Environment):
 
     def __init__(self):
         super().__init__()
-        self.card_game = SimpleGame() # TODO: can choose other cardgames - pass as param?
+        self.card_game = gameModels.SimpleGame() # TODO: can choose other cardgames - pass as param?
 
     def states(self):
         # num_locations is the number of places card can be - number of players + 1
@@ -29,13 +29,13 @@ class CardEnvironment(Environment):
         super().close()
 
     def reset(self):
-        state = np.random.random(size=(8,))
+        state = np.random.normal(size=(8,))
         return state
 
     def execute(self, action):
-        next_state = np.random.random(size=(8,))
-        terminal = np.random.random() < 0.5
-        reward = np.random.random()
+        next_state = np.random.normal(size=(8,))
+        terminal = np.random.normal() < 0.5
+        reward = np.random.normal()
         return next_state, terminal, reward
 
 
