@@ -1,7 +1,7 @@
 # just using template from FLight example
 # will make it work for cards
 # scaffold, not a working python file at this point
-
+from game-environments import CardEnvironment
 
 def run(environment, agent, n_episodes, max_step_per_episode, test=False):
     """
@@ -38,19 +38,14 @@ def runner(
     result_vec = [] #initialize the result list
     for i in range(round(n_episodes / 100)): #Divide the number of episodes into batches of 100 episodes
         if result_vec:
-            print("batch", i, "Best result", result_vec[-1]) #Show the results for the current batch
+            print("batch {} Best result={}".format(i, result_vec[-1])) #Show the results for the current batch
         # Train Agent for 100 episode
         run(environment, agent, 100, max_step_per_episode)
         # Test Agent for this batch
-        test_results = run(
-                environment,
-                agent,
-                n_episodes_test,
-                max_step_per_episode,
-                test=True
-            )
+        test_results = run(environment, agent, n_episodes_test, max_step_per_episode, test=True)
         # Append the results for this batch
         result_vec.append(test_results)
+
     # Plot the evolution of the agent over the batches
     plot_multiple(
         Series=[result_vec],
@@ -63,22 +58,18 @@ def runner(
         folder=str(combination),
         time=False,
     )
-    #Terminate the agent and the environment
+    # Terminate the agent and the environment
     agent.close()
     environment.close()
 
 def main:
     # Instantiane our environment
-    environment = PlaneEnvironment()
+    environment = CardEnvironment()
     # Instantiate a Tensorforce agent
     agent = Agent.create(agent="ppo",environment=environment)
 
     # Call runner
-    runner(
-        environment,
-        agent,
-        max_step_per_episode=1000,
-        n_episodes=10000)
+    runner(environment, agent, max_step_per_episode=1000, n_episodes=10000)
 
 if __name__ == '__main__':
     main()

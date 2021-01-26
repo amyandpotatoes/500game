@@ -23,7 +23,6 @@ class GenericCardModel:
 
     def reward(self) -> int:
         """"return an int giving the score at the end of the game"""
-        score = 1
         if self.terminal():
             return self.calculate_score()
         else:

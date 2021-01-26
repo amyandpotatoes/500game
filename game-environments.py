@@ -1,3 +1,9 @@
+import game-models.py
+
+from tensorforce.environment import Environment
+
+import numpy as np # leave this to stop errors in scaffold for now
+
 class CardEnvironment(Environment):
 
     def __init__(self):
