@@ -32,8 +32,8 @@ class CardEnvironment(Environment):
         state = self.card_game.start_game()
         return state
 
-    def execute(self, action):
-        next_state = self.card_game.next_state(action)
+    def execute(self, actions):
+        next_state = self.card_game.next_state(actions)
         terminal = self.card_game.terminal()
         reward = self.card_game.reward()
         return next_state, terminal, reward

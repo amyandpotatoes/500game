@@ -58,7 +58,11 @@ class SimpleGame(GenericCardModel):
         Set the current state to the SimpleGame hardcoded initial state and return this state.
         :return: initial state as a tensor
         """
-        self.current_state = tf.constant([[0, 1, 0, 1], [1, 0, 1, 0], [0, 0, 0, 0], [0, 0, 0, 0]], dtype=tf.bool)
+        self.current_state = tf.constant([[False, True, False, True],
+                                          [True, False, True, False],
+                                          [False, False, False, False],
+                                          [False, False, False, False]], dtype=tf.bool)
+        self.is_illegal = False
         return self.current_state
 
     def next_state(self, player_action):
@@ -70,6 +74,8 @@ class SimpleGame(GenericCardModel):
         if player_action not in legal_actions[0]:
             self.is_illegal = True
             player_action = int(tf.gather(hands[0], 0))
+        else:
+            self.is_illegal = False
 
         # get opponent's action - play first card
         opponent_action = int(tf.gather(hands[1], 0))
@@ -103,7 +109,7 @@ class SimpleGame(GenericCardModel):
         """given a terminal state, return the score for the player"""
         player_tricks = tf.gather(self.current_state, 2)
         opponent_tricks = tf.gather(self.current_state, 3)
-        player_score = int(tf.math.reduce_sum(tf.cast(player_tricks, dtype='int32'))) * 10
-        opponent_score = int(tf.math.reduce_sum(tf.cast(opponent_tricks, dtype='int32'))) * 10
+        player_score = int(tf.math.reduce_sum(tf.cast(player_tricks, dtype='int32'))) * 10 / self.num_players
+        opponent_score = int(tf.math.reduce_sum(tf.cast(opponent_tricks, dtype='int32'))) * 10 / self.num_players
         score = player_score - opponent_score
         return score
