@@ -4,10 +4,10 @@ class GenericCardModel:
     """"class that concrete card models derive from"""
 
     def __int__(self):
-        # TODO
-        self.num_locations = None
         self.num_players = None
-        current_state = None
+        self.num_locations = None
+        self.num_cards = None
+        self.current_state = None
 
     def start_game(self):
         """"set up the game, shuffle the cards etc and store in current state and return it"""
@@ -35,5 +35,7 @@ class GenericCardModel:
 
 class SimpleGame(GenericCardModel):
     def __init__(self):
-        self.num_locations = 3
+        self.num_players = 2
+        self.num_locations = 4
         self.num_cards = 10
+        self.current_state = None
