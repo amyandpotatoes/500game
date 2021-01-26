@@ -1,5 +1,8 @@
 # 500game
+## Overview
+A playable version of the classic card game 500, with bots to play against. Uses the tensorforce module for reinforcement learning.
 
-A playable version of the classic card game 500, with bots to play against.
+
+## Example
 
 Currently a work in progress.
