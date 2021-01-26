@@ -73,12 +73,12 @@ class SimpleGame(GenericCardModel):
         legal_actions = [tf.where(hand) for hand in hands]
         if player_action not in legal_actions[0]:
             self.is_illegal = True
-            player_action = int(tf.gather(hands[0], 0))
+            player_action = int(tf.gather(tf.gather(legal_actions, 0), 0))
         else:
             self.is_illegal = False
 
         # get opponent's action - play first card
-        opponent_action = int(tf.gather(hands[1], 0))
+        opponent_action = int(tf.gather(tf.gather(legal_actions, 1), 0))
 
         # get next state given actions
         # combine all actions
@@ -88,9 +88,12 @@ class SimpleGame(GenericCardModel):
         # apply actions
         state_copy = self.current_state.numpy()
         for player in range(self.num_players):
+            # print('Player {} is playing'.format(player))
             # remove card from hand
+            # print('Remove card {} from player {}'.format(actions[player], player))
             state_copy[player, actions[player]] = False
             # place card into tricks of winning player
+            # print('Give card {} to player {} in location {}'.format(actions[player], winner, winner + self.num_players))
             state_copy[winner + self.num_players, actions[player]] = True
 
         # set as current state

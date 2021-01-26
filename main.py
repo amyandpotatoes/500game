@@ -23,7 +23,7 @@ def main():
 
     runner.run(num_episodes=2000)
 
-    runner.run(num_episodes=1000, evaluation=True)
+    runner.run(num_episodes=500, evaluation=True)
 
     runner.close()
 
