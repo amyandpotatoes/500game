@@ -27,7 +27,7 @@ class GenericCardModel:
         """"return whether the current state is terminal"""
         pass
 
-    def reward(self, action) -> int:
+    def reward(self) -> int:
         """"return an int giving the score for this round"""
         # if an illegal action has been made, return negative score
         if self.is_illegal:

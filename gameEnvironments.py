@@ -1,14 +1,14 @@
 import gameModels
 
-from tensorforce.environment import Environment
-
+from tensorforce.environments import Environment
 import numpy as np # leave this to stop errors in scaffold for now
+
 
 class CardEnvironment(Environment):
 
     def __init__(self):
         super().__init__()
-        self.card_game = SimpleGame() # TODO: can choose other cardgames - pass as param?
+        self.card_game = gameModels.SimpleGame()  # TODO: can choose other cardgames - pass as param?
 
     def states(self):
         # num_locations is the number of places card can be - number of players + 1
@@ -22,7 +22,7 @@ class CardEnvironment(Environment):
     # maximum episode length; otherwise specify maximum number of training
     # timesteps via Environment.create(..., max_episode_timesteps=???)
     def max_episode_timesteps(self):
-        return super().max_episode_timesteps()
+        return self.card_game.num_turns
 
     # Optional additional steps to close environment
     def close(self):
@@ -33,7 +33,7 @@ class CardEnvironment(Environment):
         return state
 
     def execute(self, action):
-        next_state = self.card_game.next_state()
+        next_state = self.card_game.next_state(action)
         terminal = self.card_game.terminal()
         reward = self.card_game.reward()
         return next_state, terminal, reward
