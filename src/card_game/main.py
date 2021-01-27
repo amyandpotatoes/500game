@@ -1,4 +1,4 @@
-from gameEnvironments import CardEnvironment
+from card_game.gameEnvironments import CardEnvironment as CardEnvironment
 
 from tensorforce.agents import Agent
 from tensorforce.execution import Runner

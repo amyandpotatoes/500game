@@ -1,4 +1,4 @@
-import gameModels
+import card_game.gameModels as gameModels
 
 from tensorforce.environments import Environment
 import numpy as np # leave this to stop errors in scaffold for now
@@ -6,9 +6,9 @@ import numpy as np # leave this to stop errors in scaffold for now
 
 class CardEnvironment(Environment):
 
-    def __init__(self):
+    def __init__(self, game_type=None):
         super().__init__()
-        self.card_game = gameModels.SimpleGame()  # TODO: can choose other cardgames - pass as param?
+        self.card_game = game_type or gameModels.SimpleGame()  # TODO: can choose other cardgames - pass as param?
 
     def states(self):
         # num_locations is the number of places card can be - number of players + 1
