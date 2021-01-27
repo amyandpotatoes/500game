@@ -11,7 +11,7 @@ def main():
     )
 
     agent = Agent.create(
-        agent='ppo', environment=environment, batch_size=10, learning_rate=1e-3
+        agent='ppo', environment=environment, batch_size=200, discount=1.0
     )
 
     # agent = Agent.create(agent='random', environment=environment)
@@ -21,9 +21,9 @@ def main():
                     max_episode_timesteps=None
                     )
 
-    runner.run(num_episodes=2000)
+    runner.run(num_episodes=50000)
 
-    runner.run(num_episodes=500, evaluation=True)
+    runner.run(num_episodes=2000, evaluation=True)
 
     runner.close()
 
