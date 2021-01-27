@@ -2,6 +2,7 @@
 
 import tensorflow as tf
 import numpy as np
+import random
 
 
 class GenericCardModel:
@@ -45,15 +46,18 @@ class GenericCardModel:
 
     def shuffle_and_deal(self):
         """randomly deal all the cards to the players by assigning the state"""
-        # FIXME: currently does not ensure that all players have the same number of cards and this uses the old random interface
         # initialise the state
-        state = np.zeros(size=(self.num_locations, self.num_cards), dtype=np.bool)
-        # for each card, randomly choose a player and set it in the state
-        for card in range(self.num_cards):
-            player = np.random.randint(self.num_players)
-            state[player][card] = True
-        self.current_state = tf.convert_to_tensor(state)
+        state = np.zeros(shape=(self.num_locations, self.num_cards), dtype=np.bool)
+        # shuffle deck of cards
+        deck = list(range(self.num_cards))
+        random.shuffle(deck)
+        # split cards into hands and create state to reflect this
+        hands = [deck[i::self.num_players] for i in range(self.num_players)]
+        for player in range(self.num_players):
+            for card in hands[player]:
+                state[player][card] = True
 
+        self.current_state = tf.convert_to_tensor(state)
 
 
 class SimpleGame(GenericCardModel):
@@ -62,7 +66,7 @@ class SimpleGame(GenericCardModel):
         self.num_locations = 4
         self.num_cards = 4
         self.num_turns = 2
-        self.current_state = None # tensor of size num_locations, num_players. TODO: add assertions
+        self.current_state = None  # tensor of size num_locations, num_players. TODO: add assertions
         self.is_illegal = False
 
     def start_game(self):
@@ -70,11 +74,13 @@ class SimpleGame(GenericCardModel):
         Set the current state to the SimpleGame hardcoded initial state and return this state.
         :return: initial state as a tensor
         """
-        self.current_state = tf.constant([[False, True, False, True],
-                                          [True, False, True, False],
-                                          [False, False, False, False],
-                                          [False, False, False, False]], dtype=tf.bool)
+        # self.current_state = tf.constant([[False, True, False, True],
+        #                                   [True, False, True, False],
+        #                                   [False, False, False, False],
+        #                                   [False, False, False, False]], dtype=tf.bool)
+        self.shuffle_and_deal()
         self.is_illegal = False
+        print(self.current_state)
         return self.current_state
 
     def next_state(self, player_action):

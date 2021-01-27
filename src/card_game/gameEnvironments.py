@@ -1,4 +1,4 @@
-import card_game.gameModels as gameModels
+import gameModels as gameModels
 
 from tensorforce.environments import Environment
 import numpy as np # leave this to stop errors in scaffold for now
