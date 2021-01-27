@@ -43,6 +43,18 @@ class GenericCardModel:
         """given a terminal state, return the score for the player"""
         pass
 
+    def shuffle_and_deal(self):
+        """randomly deal all the cards to the players by assigning the state"""
+        # FIXME: currently does not ensure that all players have the same number of cards and this uses the old random interface
+        # initialise the state
+        state = np.zeros(size=(self.num_locations, self.num_cards), dtype=np.bool)
+        # for each card, randomly choose a player and set it in the state
+        for card in range(self.num_cards):
+            player = np.random.randint(self.num_players)
+            state[player][card] = True
+        self.current_state = tf.convert_to_tensor(state)
+
+
 
 class SimpleGame(GenericCardModel):
     def __init__(self):
@@ -50,7 +62,7 @@ class SimpleGame(GenericCardModel):
         self.num_locations = 4
         self.num_cards = 4
         self.num_turns = 2
-        self.current_state = None
+        self.current_state = None # tensor of size num_locations, num_players. TODO: add assertions
         self.is_illegal = False
 
     def start_game(self):
